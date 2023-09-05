@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import mbadzhev.webapp.server.dto.CreatePersonRequestDTO;
+import mbadzhev.webapp.server.dto.PersonDTO;
 import mbadzhev.webapp.server.model.Address;
 import mbadzhev.webapp.server.model.Email;
 import mbadzhev.webapp.server.model.Person;
@@ -28,6 +29,7 @@ import mbadzhev.webapp.server.repository.PersonRepository;
 
 @RestController
 @RequestMapping("/api/people")
+// @CrossOrigin(origins = "http://127.0.0.1:5173/")
 public class PeopleController {
     @Autowired
     private PersonRepository personRepository;
@@ -60,13 +62,22 @@ public class PeopleController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Person> readPersonById(@PathVariable Long id) {
-        Optional<Person> person = personRepository.findById(id);
-        return person.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<?> readPersonById(@PathVariable Long id) {
+        Optional<Person> personOptional = personRepository.findById(id);
+        if (personOptional.isPresent()) {
+            Person person = personOptional.get();
+            List<Email> foundEmails = emailRepository.findByPerson(person);
+            List<Address> foundAddresses = addressRepository.findByPerson(person);
+            PersonDTO personDto = new PersonDTO(person, foundEmails, foundAddresses);
+
+            return ResponseEntity.ok(personDto);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PostMapping("")
-    public ResponseEntity<?> createPerson(@RequestBody CreatePersonRequestDTO requestDTO) {
+    public ResponseEntity<?> createPerson(@RequestBody PersonDTO requestDTO) {
         Person person = requestDTO.getPerson();
         List<Email> emails = requestDTO.getEmails();
         List<Address> addresses = requestDTO.getAddresses();
@@ -116,7 +127,7 @@ public class PeopleController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updatePerson(@PathVariable Long id, @RequestBody CreatePersonRequestDTO requestDTO) {
+    public ResponseEntity<?> updatePerson(@PathVariable Long id, @RequestBody PersonDTO requestDTO) {
         Person updatedPerson = requestDTO.getPerson();
         List<Email> updatedEmails = requestDTO.getEmails();
         List<Address> updatedAddresses = requestDTO.getAddresses();

@@ -6,15 +6,15 @@ import mbadzhev.webapp.server.model.Address;
 import mbadzhev.webapp.server.model.Email;
 import mbadzhev.webapp.server.model.Person;
 
-public class CreatePersonRequestDTO {
+public class PersonDTO {
     private Person person;
     private List<Email> emails;
     private List<Address> addresses;
 
-    CreatePersonRequestDTO() {
+    public PersonDTO() {
     };
 
-    CreatePersonRequestDTO(Person person, List<Email> emails, List<Address> addresses) {
+    public PersonDTO(Person person, List<Email> emails, List<Address> addresses) {
         this.person = person;
         this.emails = emails;
         this.addresses = addresses;
