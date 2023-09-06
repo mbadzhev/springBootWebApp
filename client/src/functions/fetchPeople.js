@@ -1,6 +1,6 @@
 async function fetchPeople() {
   try {
-    const url = "http://localhost:8080/api/people/";
+    const url = "/api/people/";
     const response = await fetch(url);
     if (!response.ok) {
       throw new Error(

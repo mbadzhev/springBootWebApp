@@ -1,6 +1,6 @@
 async function fetchPersonById(personId) {
   try {
-    const url = `http://localhost:8080/api/people/${personId}`;
+    const url = `/api/people/${personId}`;
     const response = await fetch(url);
     if (!response.ok) {
       throw new Error(`This is an HTTP error with status ${response.status}`);

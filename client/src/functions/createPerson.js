@@ -1,6 +1,6 @@
 async function createPerson(personData) {
   try {
-    const url = "http://localhost:8080/api/people";
+    const url = "/api/people";
     const response = await fetch(url, {
       method: "POST",
       headers: {
@@ -8,16 +8,38 @@ async function createPerson(personData) {
       },
       body: JSON.stringify(personData),
     });
+
     if (!response.ok) {
-      throw new Error(
-        `This is an HTTP error: The status is ${response.status}`
-      );
+      let errorMessage = "An error occurred while processing the request.";
+
+      // Check if the response content type is plain text.
+      if (response.headers.get("content-type")?.includes("text/plain")) {
+        try {
+          // Parse the plain text error message.
+          const errorText = await response.text();
+          if (errorText) {
+            errorMessage = errorText;
+          }
+        } catch (textError) {
+        }
+      }
+      return {
+        error: true,
+        status: response.status,
+        message: errorMessage,
+      };
+    } else {
+      return {
+        error: false,
+        status: response.status,
+      };
     }
-    return response;
   } catch (error) {
-    throw new Error(
-      `There is a problem fetching the requested data - ${error}`
-    );
+    return {
+      error: true,
+      status: 500,
+      message: `Error creating person: ${error.message}`,
+    };
   }
 }
 
