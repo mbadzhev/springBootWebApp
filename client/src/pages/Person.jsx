@@ -44,24 +44,19 @@ function Person() {
   const closePopup = () => {
     setShowPopup(false);
   };
-
-  const handleEmailChange = (index, key, value) => {
-    const updatedEmails = [...emailData];
-    updatedEmails[index][key] = value;
-    setEmailData(updatedEmails);
-  };
-
+  
   if (loading) {
     return <Loading />;
   }
   if (error) {
     return <Error error={error} />;
   }
-
+  
   return (
     <>
       {personData && (
         <>
+        <button onClick={openPopup}>Edit Record</button>
           <div>
             <h1>Personal Information</h1>
             <p>ID: {personData.person.id}</p>
@@ -84,18 +79,12 @@ function Person() {
               </li>
             ))}
           </div>
-          <div>
-            <button onClick={openPopup}>Edit Record</button>
             <EditRecordPopup
               show={showPopup}
               onClose={closePopup}
               personData={personData}
             >
-              {/* Content for your popup */}
-              <h2>Hello, I'm a Popup!</h2>
-              <p>This is some content inside the popup window.</p>
             </EditRecordPopup>
-          </div>
         </>
       )}
     </>

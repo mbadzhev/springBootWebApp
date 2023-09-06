@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 // Components
 import Loading from "../components/Loading";
 import Error from "../components/Error";
-import Button from "../components/Button";
 import AddRecordPopup from "../components/AddRecordPopup";
 import PeopleTable from "../components/PeopleTable";
 
@@ -86,7 +85,7 @@ function Dashboard() {
         value={filterText}
         onChange={handleFilterChange}
       />
-      <Button text={"Add record"} type={"utility"} handleAction={openPopup} />
+      <button onClick={openPopup}>Add record</button>
       <AddRecordPopup
         show={showPopup}
         onClose={closePopup}
