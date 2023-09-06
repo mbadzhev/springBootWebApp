@@ -15,11 +15,14 @@ function PeopleTable({ personData, handleViewDetails, triggerRefetch }) {
       const shouldDelete = window.confirm(
         `Are you sure you want to delete "${name}" entry?`
       );
-
+       
       if (shouldDelete) {
         const response = await deletePerson(id);
-        console.log("Person deleted:", response);
-        console.log("trigger refetch");
+        if (response.error) {
+          console.error(`Error (${response.status}): ${response.message}`);
+        } else {
+          console.log(`Success (${response.status}): Person deleted successfully`);
+        }
         triggerRefetch();
       }
     } catch (error) {

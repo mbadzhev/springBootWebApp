@@ -5,7 +5,6 @@ import "./Popup.css";
 import UpdateDataDto from "../dtos/UpdateDto";
 import AddressDto from "../dtos/AddressDto";
 import EmailDto from "../dtos/EmailDto";
-import PersonDto from "../dtos/PersonDto";
 
 // Functions
 import editPerson from "../functions/editPerson";
@@ -62,30 +61,25 @@ function EditRecordPopup({ show, onClose, personData }) {
         formData.addresses
       );
 
-      console.log("Person edited:", updateData);
       // Call the createPerson function with the updateData
       const response = await editPerson(updateData, updateData.person.id);
 
-      console.log("Person edited:", response);
-      // Display success message and close the popup
-      setSuccessMessage("Person created successfully!");
-      setErrorMessage(""); // Clear any previous error message
-      closePopup();
-      // Handle success and navigate to another page or display a success message.
+      if (response.error) {
+        console.error(`Error (${response.status}): ${response.message}`);
+        window.alert(`Error (${response.status}): ${response.message}`);
+      } else {
+        window.alert(`Successfully edited record.`);
+        console.log(`Successfully edited record (${response.status})`);
+        closePopup();
+      }
     } catch (error) {
-      console.error("Error editing person:", error);
-      // Handle the error, display an error message, or perform any necessary actions.
-      // Display error message
-      setErrorMessage("Error creating person. Please try again.");
-      setSuccessMessage(""); // Clear any previous success message
+      window.alert("Error edited person:", error);
+      console.error("Error edited person:", error);
     }
   };
 
   useEffect(() => {
     setIsOpen(show);
-    // Clear success and error messages when opening/closing the popup
-    setSuccessMessage("");
-    setErrorMessage("");
   }, [show]);
 
   function closePopup() {
@@ -96,12 +90,10 @@ function EditRecordPopup({ show, onClose, personData }) {
   return isOpen ? (
     <div className="popup-overlay">
       <div className="popup">
-        <button className="close-button" onClick={closePopup}>
+      <button onClick={closePopup}>
           Close
         </button>
         <h2>Create Record</h2>
-        {successMessage && <p className="success-message">{successMessage}</p>}
-        {errorMessage && <p className="error-message">{errorMessage}</p>}
         <label>
           Full Name:
           <input

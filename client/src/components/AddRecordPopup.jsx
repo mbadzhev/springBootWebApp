@@ -49,7 +49,7 @@ function AddRecordPopup({ show, onClose, refetch }) {
     }
     setFormData(updatedData);
   };
-
+  
   const handleSubmit = async () => {
     try {
       // Create an instance of UpdateDataDTO with the form data
@@ -61,14 +61,20 @@ function AddRecordPopup({ show, onClose, refetch }) {
 
       // Call the createPerson function with the updateData
       const response = await createPerson(updateData);
-
-      console.log("Person created:", response);
-      refetch();
-      closePopup();
-      // Handle success and navigate to another page or display a success message.
+      
+      if (response.error) {
+        console.error(`Error (${response.status}): ${response.message}`);
+        window.alert(`Error (${response.status}): ${response.message}`);
+      } else {
+        window.alert(`Successfully created record.`);
+        console.log(`Successfully created record (${response.status})`);
+        refetch();
+        closePopup();
+      }
+      
     } catch (error) {
+      window.alert("Error creating person:", error);
       console.error("Error creating person:", error);
-      // Handle the error, display an error message, or perform any necessary actions.
     }
   };
 
@@ -84,7 +90,7 @@ function AddRecordPopup({ show, onClose, refetch }) {
   return isOpen ? (
     <div className="popup-overlay">
       <div className="popup">
-        <button className="close-button" onClick={closePopup}>
+        <button onClick={closePopup}>
           Close
         </button>
         <h2>Create Record</h2>
